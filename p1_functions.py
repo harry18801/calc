@@ -1210,3 +1210,72 @@ class ParabolaTransformations(Scene):
         self.wait(3)
         self.play(FadeOut(summary_title, conditions_note, rules))
         self.wait(1)
+
+
+class LineIntroduction(Scene):
+    def construct(self):
+        # Title
+        title = Text("Equation of a Line", font_size=48).to_edge(UP)
+        self.play(Write(title))
+        self.wait(1)
+
+        # Axes
+        axes = Axes(
+            x_range=[-5, 5],
+            y_range=[-5, 5],
+            axis_config={"color": WHITE},
+        ).set_color(GRAY)
+
+        # Plot y = x
+        line = axes.plot(lambda x: x, color=BLUE, x_range=[-4, 4], stroke_width=3)
+
+        self.play(Create(axes))
+        self.play(Create(line))
+        self.wait(2)
+
+        # Highlight points on the line
+        point_1 = axes.c2p(-2, -2)
+        point_2 = axes.c2p(3, 3)
+        dot_1 = Dot(point_1, color=RED)
+        dot_2 = Dot(point_2, color=RED)
+        point_label_1 = MathTex("(x_1, y_1)").next_to(dot_1, DOWN)
+        point_label_2 = MathTex("(x_2, y_2)").next_to(dot_2, UP)
+
+        self.play(FadeIn(dot_1), Write(point_label_1))
+        self.play(FadeIn(dot_2), Write(point_label_2))
+        self.wait(2)
+
+        equations_group = VGroup(
+            MathTex(
+                r"m = \frac{\Delta y}{\Delta x} =\frac{y_2 - y_1}{x_2 - x_1}"
+            ).to_edge(LEFT + UP * 2, buff=1),
+            MathTex(r"y = mx + b").to_edge(LEFT, buff=1).shift(DOWN),
+            MathTex(r"y - y_1 = m(x - x_1)").to_edge(RIGHT, buff=1).shift(2 * DOWN),
+        )
+
+        # Show equations sequentially
+        for eq in equations_group[:-1]:  # Skip the last one for now
+            self.play(Write(eq))
+            self.wait(1)
+
+        # Highlight point-slope form
+        point_slope_form = equations_group[-1]
+        box = SurroundingRectangle(point_slope_form, color=YELLOW, buff=0.2)
+        self.play(Write(point_slope_form))
+        self.play(Create(box))
+        self.wait(4)
+
+        # Fade out all objects
+        self.play(
+            FadeOut(
+                title,
+                axes,
+                line,
+                dot_1,
+                dot_2,
+                point_label_1,
+                point_label_2,
+                equations_group,
+                box,
+            )
+        )
